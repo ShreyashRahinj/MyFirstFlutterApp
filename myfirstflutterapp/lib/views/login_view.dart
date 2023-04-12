@@ -3,8 +3,8 @@ import 'package:myfirstflutterapp/constants/routes.dart';
 import 'package:myfirstflutterapp/services/auth/auth_exceptions.dart';
 import 'package:myfirstflutterapp/services/auth/auth_service.dart';
 
-import '../utilities/show_error_dialog.dart';
-import '../utilities/show_success_dialog.dart';
+import '../utilities/dialogs/show_error_dialog.dart';
+import '../utilities/dialogs/show_success_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
