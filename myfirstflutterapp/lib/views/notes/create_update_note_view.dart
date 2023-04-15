@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:myfirstflutterapp/services/auth/auth_service.dart';
+import 'package:myfirstflutterapp/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:myfirstflutterapp/utilities/generics/get_arguments.dart';
 import 'package:myfirstflutterapp/services/cloud/cloud_note.dart';
 import 'package:myfirstflutterapp/services/cloud/cloud_storage_exceptions.dart';
 import 'package:myfirstflutterapp/services/cloud/firebase_cloud_storage.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});
@@ -85,6 +87,19 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("New Note"),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              try {
+                Share.share(text);
+              } catch (_) {
+                showCannotShareEmptyNoteDialog(context);
+              }
+            },
+            icon: const Icon(Icons.share),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: createOrGetExistingNote(context),
@@ -97,7 +112,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 decoration: const InputDecoration(
-                    hintText: "Start typing your text here"),
+                    hintText:
+                        "Enter tiltle of your note\nStart typing your text here"),
               );
             default:
               return const CircularProgressIndicator();
