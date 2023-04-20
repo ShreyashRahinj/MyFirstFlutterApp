@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:myfirstflutterapp/services/auth/auth_provider.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_event.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_state.dart';
-import 'package:myfirstflutterapp/views/verify_email_view.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider)
@@ -66,6 +65,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     on<AuthEventShouldRegister>((event, emit) {
       emit(const AuthStateRegistering(exception: null, isLoading: false));
+    });
+    on<AuthEventForgotPassword>((event, emit) async {
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: false,
+      ));
+      final email = event.email;
+      if (email == null) {
+        return;
+      }
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: true,
+      ));
+      Exception? exception;
+      bool didSentEmail;
+      try {
+        await provider.sendPasswordReset(toEmail: email);
+        exception = null;
+        didSentEmail = true;
+      } on Exception catch (e) {
+        exception = e;
+        didSentEmail = false;
+      }
+      emit(AuthStateForgotPassword(
+        exception: exception,
+        hasSentEmail: didSentEmail,
+        isLoading: false,
+      ));
     });
   }
 }
