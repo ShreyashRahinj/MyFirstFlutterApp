@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:myfirstflutterapp/services/auth/auth_provider.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_event.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_state.dart';
@@ -9,6 +12,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventSendEmailVerification>((event, emit) async {
       await provider.sendEmailVerification();
       emit(state);
+    });
+    on<AuthEventReadData>((event, emit) async {
+      try {
+        emit(const AuthStateReadingData(exception: null, isLoading: true));
+        final String stringData = await rootBundle.loadString(event.fileName);
+        final List<dynamic> json = jsonDecode(stringData);
+        final List<String> jsonStringData = json.cast<String>();
+      } on Exception catch (e) {
+        emit(AuthStateReadingData(exception: e, isLoading: false));
+      }
     });
     on<AuthEventRegister>((event, emit) async {
       try {

@@ -42,3 +42,9 @@ class AuthEventForgotPassword extends AuthEvent {
 
   const AuthEventForgotPassword({this.email});
 }
+
+class AuthEventReadData extends AuthEvent {
+  final String fileName;
+
+  const AuthEventReadData(this.fileName);
+}

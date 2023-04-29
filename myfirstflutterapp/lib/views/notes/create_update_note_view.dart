@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:myfirstflutterapp/services/auth/auth_service.dart';
 import 'package:myfirstflutterapp/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:myfirstflutterapp/utilities/generics/get_arguments.dart';
 import 'package:myfirstflutterapp/services/cloud/cloud_note.dart';
-import 'package:myfirstflutterapp/services/cloud/cloud_storage_exceptions.dart';
 import 'package:myfirstflutterapp/services/cloud/firebase_cloud_storage.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -25,6 +27,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     _textController = TextEditingController();
     super.initState();
   }
+
+  Future<void> fetchAutoCorrectData() async {}
 
   Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
     final widgetnote = context.getArgument<CloudNote>();
@@ -99,6 +103,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
             },
             icon: const Icon(Icons.share),
           ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.check))
         ],
       ),
       body: FutureBuilder(
@@ -112,8 +117,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 decoration: const InputDecoration(
-                    hintText:
-                        "Enter tiltle of your note\nStart typing your text here"),
+                    hintText: "Start typing your text here"),
               );
             default:
               return const CircularProgressIndicator();

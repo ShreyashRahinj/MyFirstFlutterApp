@@ -5,7 +5,6 @@ import 'package:myfirstflutterapp/enums/menu_action.dart';
 import 'package:myfirstflutterapp/services/auth/auth_service.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_bloc.dart';
 import 'package:myfirstflutterapp/services/auth/bloc/auth_event.dart';
-import 'package:myfirstflutterapp/services/cloud/cloud_note.dart';
 import 'package:myfirstflutterapp/services/cloud/firebase_cloud_storage.dart';
 import 'package:myfirstflutterapp/utilities/dialogs/show_logout_dialog.dart';
 import 'package:myfirstflutterapp/views/notes/notes_list_view.dart';
@@ -20,24 +19,53 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
   String get userId => AuthService.firebase().currentUser!.id;
+  String search = "";
+  late final TextEditingController _controller;
+  Widget appbartitle = Text("Your Notes");
 
   @override
   void initState() {
     _notesService = FirebaseCloudStorage();
     super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Your Notes"),
+          title: appbartitle,
           actions: [
             IconButton(
               onPressed: () {
                 Navigator.of(context).pushNamed(createupdatenoteroute);
               },
               icon: const Icon(Icons.add),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  appbartitle = TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search, color: Colors.white),
+                      hintText: "Search...",
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        search = value;
+                      });
+                    },
+                  );
+                });
+              },
+              icon: const Icon(Icons.search),
             ),
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
@@ -68,10 +96,11 @@ class _NotesViewState extends State<NotesView> {
               case ConnectionState.waiting:
               case ConnectionState.active:
                 if (snapshot.hasData) {
-                  final allNotes = snapshot.data as Iterable<CloudNote>;
+                  final allNotes = snapshot.data!;
                   return NotesListView(
-                    notes: allNotes
-                        .where((element) => element.ownerUserId == userId),
+                    notes: allNotes.where((element) =>
+                        element.ownerUserId == userId &&
+                        element.text.contains(search)),
                     onDeleteNote: (note) async {
                       await _notesService.deleteNote(
                           documentId: note.documentId);
