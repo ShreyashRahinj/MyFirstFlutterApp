@@ -46,36 +46,68 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Reset pasword'),
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(children: [
-            const Text(
-                'If you have forgot your password, simply enter your eail and we will send you a password reset link'),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              autofocus: true,
-              controller: _controller,
-              decoration: const InputDecoration(
-                  hintText: 'Enter your registered email adress'),
-            ),
-            TextButton(
-              onPressed: () {
-                final email = _controller.text;
-                context
-                    .read<AuthBloc>()
-                    .add(AuthEventForgotPassword(email: email));
-              },
-              child: const Text('Send'),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(const AuthEventLogout());
-              },
-              child: const Text('Back to Login'),
-            ),
-          ]),
+        body: Container(
+          color: const Color.fromARGB(255, 46, 49, 51),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 103,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        style: BorderStyle.solid,
+                        color: Colors.white,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.black),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(children: [
+                      TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        autocorrect: false,
+                        autofocus: true,
+                        style: const TextStyle(
+                            color: Colors.white, decorationColor: Colors.white),
+                        decoration: const InputDecoration(
+                          hintText: 'Enter your registered email adress',
+                          hintStyle: TextStyle(color: Colors.white),
+                        ),
+                        cursorColor: Colors.white,
+                        controller: _controller,
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final email = _controller.text;
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventForgotPassword(email: email));
+                },
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                    foregroundColor: MaterialStateProperty.all(Colors.white)),
+                child: const Text('Send'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogout());
+                },
+                style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white)),
+                child: const Text('Back to Login'),
+              ),
+            ],
+          ),
         ),
       ),
     );

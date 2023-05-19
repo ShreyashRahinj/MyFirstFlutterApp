@@ -1,6 +1,5 @@
 import 'dart:math';
-
-void main() {}
+import 'package:string_validator/string_validator.dart';
 
 class DL {
   int optimalStringAlignmentDistance(String s1, String s2) {
@@ -27,5 +26,30 @@ class DL {
     }
 
     return dp[s1.length][s2.length];
+  }
+
+  String nearestWord(String actualWord, List<String> data) {
+    int diff = 1000;
+    String tbReplace = actualWord;
+    for (String word in data) {
+      if (optimalStringAlignmentDistance(word, actualWord) < diff &&
+          word.length == actualWord.length) {
+        diff = optimalStringAlignmentDistance(word, actualWord);
+        tbReplace = word;
+      }
+    }
+    return tbReplace;
+  }
+
+  String autocorrectParagraph(List<String> paragraph, List<String> data) {
+    String correctedText = "";
+    for (int i = 0; i < paragraph.length; i++) {
+      if (isLowercase(paragraph[i][0])) {
+        correctedText += nearestWord(paragraph[i], data) + " ";
+      } else {
+        correctedText += paragraph[i] + " ";
+      }
+    }
+    return correctedText;
   }
 }

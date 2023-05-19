@@ -21,7 +21,7 @@ class _NotesViewState extends State<NotesView> {
   String get userId => AuthService.firebase().currentUser!.id;
   String search = "";
   late final TextEditingController _controller;
-  Widget appbartitle = Text("Your Notes");
+  Widget appbartitle = const Text("Your Notes");
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.black,
           title: appbartitle,
           actions: [
             IconButton(
@@ -52,11 +53,23 @@ class _NotesViewState extends State<NotesView> {
               onPressed: () {
                 setState(() {
                   appbartitle = TextField(
+                    autofocus: true,
+                    style: const TextStyle(color: Colors.white),
                     controller: _controller,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search, color: Colors.white),
-                      hintText: "Search...",
-                    ),
+                    decoration: InputDecoration(
+                        prefixIcon: IconButton(
+                          color: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              appbartitle = const Text("Your Notes");
+                            });
+                          },
+                          icon: const Icon(Icons.close),
+                        ),
+                        filled: true,
+                        fillColor: Colors.black,
+                        hintText: "Search...",
+                        hintStyle: const TextStyle(color: Colors.white)),
                     onChanged: (value) {
                       setState(() {
                         search = value;
@@ -89,34 +102,42 @@ class _NotesViewState extends State<NotesView> {
             )
           ],
         ),
-        body: StreamBuilder(
-          stream: _notesService.allNotes(ownerUserId: userId),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-                if (snapshot.hasData) {
-                  final allNotes = snapshot.data!;
-                  return NotesListView(
-                    notes: allNotes.where((element) =>
-                        element.ownerUserId == userId &&
-                        element.text.contains(search)),
-                    onDeleteNote: (note) async {
-                      await _notesService.deleteNote(
-                          documentId: note.documentId);
-                    },
-                    onTap: (note) {
-                      Navigator.of(context)
-                          .pushNamed(createupdatenoteroute, arguments: note);
-                    },
-                  );
-                } else {
-                  return const CircularProgressIndicator();
+        body: Container(
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 46, 49, 51),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: StreamBuilder(
+              stream: _notesService.allNotes(ownerUserId: userId),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    if (snapshot.hasData) {
+                      final allNotes = snapshot.data!;
+                      return NotesListView(
+                        notes: allNotes.where((element) =>
+                            element.ownerUserId == userId &&
+                            element.text.contains(search)),
+                        onDeleteNote: (note) async {
+                          await _notesService.deleteNote(
+                              documentId: note.documentId);
+                        },
+                        onTap: (note) {
+                          Navigator.of(context).pushNamed(createupdatenoteroute,
+                              arguments: note);
+                        },
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  default:
+                    return const CircularProgressIndicator();
                 }
-              default:
-                return const CircularProgressIndicator();
-            }
-          },
+              },
+            ),
+          ),
         ));
   }
 }

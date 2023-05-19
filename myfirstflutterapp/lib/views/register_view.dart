@@ -52,28 +52,62 @@ class _RegisterViewState extends State<RegisterView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text("Register")),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        appBar: AppBar(
+          title: const Text("Register"),
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+        ),
+        body: Container(
+          color: const Color.fromARGB(255, 46, 49, 51),
           child: Column(
             children: [
-              const Text('Welocme user , Register now to start writing notes'),
-              TextField(
-                enableSuggestions: false,
-                autocorrect: false,
-                autofocus: true,
-                keyboardType: TextInputType.emailAddress,
-                decoration:
-                    const InputDecoration(hintText: "Enter your email here"),
-                controller: _email,
+              const SizedBox(
+                height: 103,
               ),
-              TextField(
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration:
-                    const InputDecoration(hintText: "Enter your password here"),
-                controller: _password,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          style: BorderStyle.solid, color: Colors.white),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.black),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          autofocus: true,
+                          keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              decorationColor: Colors.white),
+                          decoration: const InputDecoration(
+                            hintText: "Enter your email here",
+                            hintStyle: TextStyle(color: Colors.white),
+                          ),
+                          controller: _email,
+                          cursorColor: Colors.white,
+                        ),
+                        TextField(
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              decorationColor: Colors.white),
+                          decoration: const InputDecoration(
+                            hintText: "Enter your password here",
+                            hintStyle: TextStyle(color: Colors.white),
+                          ),
+                          controller: _password,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () async {
@@ -83,12 +117,17 @@ class _RegisterViewState extends State<RegisterView> {
                       .read<AuthBloc>()
                       .add(AuthEventRegister(email, password));
                 },
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                    foregroundColor: MaterialStateProperty.all(Colors.white)),
                 child: const Text("Register"),
               ),
               TextButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(const AuthEventLogout());
                   },
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.white)),
                   child: const Text("Already have an account? Login Here"))
             ],
           ),
